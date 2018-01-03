@@ -1,13 +1,15 @@
 class Computer:
-    def __init__(self, name, priceHr, priceMo, cpus, memRam, memSSD, bandwidth):
+    def __init__(self, service, name, priceHr, priceMo, cpus, memRam, ramtype, memSSD, ssdtype, bandwidth):
         self.name = name
         self.priceHr = priceHr
         self.priceMo = priceMo
         self.cpus = cpus
         self.memRam = memRam
+        self.ramtype = ramtype
         self.memSSD = memSSD
+        self.ssdtype = ssdtype
         self.bandwidth = bandwidth
-
+#re.findall("\d+\.\d+",
     def setName(self, name):
         self.name = name
     def getName(self):
@@ -23,7 +25,31 @@ class Computer:
     def getpriceMo(self):
         return self.priceMo
 
+    def setcpus(self, cpus):
+        self.cpus = cpus
+    def getcpus(self):
+        return self.cpus
 
-a = Computer('PC1', 323, 323, 5, 321321, 321321, 3213213)
+    def setmemRam(self, memRam):
+        self.memRam = memRam
+    def getmemRam(self):
+        return self.memRam
 
-print (a.getName())
+    def setmemSSD(self, memSSD):
+        self.name = memSSD
+    def getmemSSD(self):
+        return self.memSSD
+
+    def setbandwidth(self, bandwidth):
+        self.bandwidth = bandwidth
+    def getbandwidth(self):
+        return self.bandwidth
+
+    def showData(self):
+        print ("Name = ", self.name)
+        print ("Price hr = ", self.priceHr)
+        print ("Price mo = ", self.priceMo)
+        print ("CPUS = ", self.cpus)
+        print ("RAM = ", self.memRam)
+        print ("SSD = ", self.memSSD)
+        print ("Transfer = ", self.bandwidth)
