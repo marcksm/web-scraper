@@ -1,9 +1,10 @@
 import sqlite3
-conn = None
-cursor = None
+
 
 def makeConnection():
+    global conn
     conn = sqlite3.connect('computers.db')
+    global cursor
     cursor = conn.cursor()
     print("Connected to sqlite db")
 
@@ -13,9 +14,13 @@ def closeConnection():
     print("Connection closed")
 
 def createTable():
+    print (cursor)
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
+        cursor.execute("""
+            DROP TABLE if exists computers
+            """)
         cursor.execute("""
             CREATE TABLE computers (
                 id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -26,9 +31,8 @@ def createTable():
                 cpus       INTEGER NOT NULL,
                 memram     INTEGER NOT NULL,
                 memssd     INTEGER NOT NULL,
-                bandwidth  INTEGER NOT NULL,
-                created_at DATE NOT NULL
-            );
+                bandwidth  INTEGER NOT NULL
+            , UNIQUE (pricehr, pricemo, cpus, memram, memssd, bandwidth) ON CONFLICT REPLACE);
         """)
         print('Table was successfully created.')
 
@@ -37,11 +41,11 @@ def tableInsert(data):
         print("Connection failure, make sure you are connected to db")
     else:
         cursor.execute("""
-        INSERT INTO computers (name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth, created_at)
-        VALUES (?)
-        """, data)
+        INSERT INTO computers (name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]))
 
-def tableSave ():
+def tableSave():
     if conn == None:
         print ("Error, sqlite is not connected")
     else:
