@@ -2,6 +2,7 @@ import requests
 from lxml import html
 from computer import Computer
 
+
 def makeRequests():
     r1 = requests.get('https://www.digitalocean.com/pricing/')
 #    r2 = requests.get('https://www.vultr.com/pricing/')
@@ -23,12 +24,12 @@ def buildComputer(comp_tree):
 
 def computers():
     comp = makeRequests()
-    #print(len(comp))
     for i in range (0, len(comp)):
         computer = buildComputer(comp[i])
         computer.showData()
         #sqldata=computer.getData()
         #save to sqllite
         print('\n')
+
 
 computers()
