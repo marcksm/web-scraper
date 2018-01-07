@@ -14,7 +14,6 @@ def closeConnection():
     print("Connection closed")
 
 def createTable():
-    print (cursor)
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
@@ -32,7 +31,7 @@ def createTable():
                 memram     INTEGER NOT NULL,
                 memssd     INTEGER NOT NULL,
                 bandwidth  INTEGER NOT NULL
-            , UNIQUE (pricehr, pricemo, cpus, memram, memssd, bandwidth) ON CONFLICT REPLACE);
+            , UNIQUE (pricehr, pricemo, cpus, memram, memssd, bandwidth) ON CONFLICT IGNORE);
         """)
         print('Table was successfully created.')
 

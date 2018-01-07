@@ -2,6 +2,7 @@ import requests
 from lxml import html
 from computer import Computer
 import sqlitedatabase
+import re
 
 def makeRequests():
     global r1, r2, r3
@@ -45,14 +46,15 @@ def extractR3(comp_tree):
     price_hr = comp_tree.xpath('div[@class="head"]/p')[0].text_content()
     name = comp_tree.xpath('div[@class="head"]/p[@class="label"]')[0].text_content()
     cpus = comp_tree.xpath('div[@class="body flex"]/span/p/b')[0].text_content()
-    print (cpus)
-    print ("\n")
-    mem_ram = comp_tree.xpath('div[@class="body flex"]/span/p')[1].text_content()
-    mem_ssd = comp_tree.xpath('div[@class="body flex"]/span/p')[2].text_content()
-    bandwidth = comp_tree.xpath('div[@class="body flex"]/span/p')[3].text_content()
-    print(bandwidth)
+    body = comp_tree.xpath('div[@class="body flex"]/span/p/b')
+    for i in range (0, len(body)):
+        if re.search('RAM',body[i].text_content()):
+            mem_ram = comp_tree.xpath('div[@class="body flex"]/span/p/b')[i].text_content()
+        if re.search('SSD', body[i].text_content()):
+            mem_ssd = comp_tree.xpath('div[@class="body flex"]/span/p/b')[i].text_content()
+        if re.search('Network', body[i].text_content()):
+            bandwidth = comp_tree.xpath('div[@class="body flex"]/span/p')[i].text_content()
     computer = Computer (r3.url, name, price_hr, price_mo, cpus, mem_ram, mem_ssd, bandwidth)
-    #computer.showData()
     return computer
 
 def extractData():
@@ -69,6 +71,12 @@ def extractData():
                 computer = extractR2(comp[i])
             else:
                 computer = extractR3(comp[i])
+            sqlitedatabase.tableInsert(computer.toSQL())
+            sqlitedatabase.tableInsert(computer.toSQL())
+            sqlitedatabase.tableInsert(computer.toSQL())
+            sqlitedatabase.tableInsert(computer.toSQL())
+            sqlitedatabase.tableInsert(computer.toSQL())
+            sqlitedatabase.tableInsert(computer.toSQL())
             sqlitedatabase.tableInsert(computer.toSQL())
     sqlitedatabase.tableSave()
     sqlitedatabase.closeConnection()
