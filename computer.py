@@ -13,16 +13,16 @@ class Computer:
         self.ssdtype = re.findall("[a-zA-Z]+", memSSD)[0]
         self.bandwidth = int(re.findall("\d+", bandwidth)[0])
         self.bandwidthtype = re.findall("[a-zA-Z]+", bandwidth)[0]
-    #
-    # def convertTo(storageType):
-    #     if !ramtype == storageType:
-    #         if ramtype == 'MB':
-    #             (FORMULA)
-    #         if ramtype == 'TB':
-    #             (FORMULA)
-    #         if ramtype == 'GB':
-    #             (FORMULA)
-    #         ramtype = storageType
+        #
+        # def convertTo(storageType):
+        #     if !ramtype == storageType:
+        #         if ramtype == 'MB':
+        #             (FORMULA)
+        #         if ramtype == 'TB':
+        #             (FORMULA)
+        #         if ramtype == 'GB':
+        #             (FORMULA)
+        #         ramtype = storageType
 
     def toSQL(self):
         data = [self.name, self.service, self.priceHr, self.priceMo, self.cpus, self.memRam, self.memSSD, self.bandwidth]
