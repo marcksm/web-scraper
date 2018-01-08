@@ -1,6 +1,11 @@
 import re
 
 class Computer:
+
+    hdd = None
+    hdd_size = None
+    hdd_type = None
+
     def __init__(self, service, name, priceHr, priceMo, cpus, memRam, memSSD, bandwidth):
         self.name = name
         self.service = service
@@ -14,16 +19,45 @@ class Computer:
         self.bandwidth = float(re.findall("[0-9]+\.*[0-9]*", bandwidth)[0])
         self.bandwidthtype = re.findall("[a-zA-Z]+", bandwidth)[0]
 
-        #
-        # def convertTo(storageType):
-        #     if !ramtype == storageType:
-        #         if ramtype == 'MB':
-        #             (FORMULA)
-        #         if ramtype == 'TB':
-        #             (FORMULA)
-        #         if ramtype == 'GB':
-        #             (FORMULA)
-        #         ramtype = storageType
+    def ishdd(self):
+        if hdd != None:
+            return True
+        else:
+            return False
+
+    def sethdd(self, hdd_size, hdd_type):
+        self.hdd = True
+        self.hdd_size = hdd_size
+        self.hdd_type = hdd_type
+        if (self.ssdtype == 'GB'):
+            if (self.hdd_type == 'TB'):
+                self.hdd_size = float(self.hdd_size * 1024)
+                self.hdd_type = 'GB'
+        if (self.ssdtype == 'TB'):
+            if (self.hdd_type == 'GB'):
+                self.hdd_size = float(self.hdd_size / 1024)
+                self.hdd_type = 'GB'
+        self.memSSD = self.memSSD + self.hdd_size
+
+    def convertToGB(self):
+        if self.ramtype != 'GB':
+            if self.ramtype == 'MB':
+                self.memRam = float(self.memRam/1024)
+            if self.ramtype == 'TB':
+                self.memRam = float(self.memRam*1024)
+            self.ramtype = 'GB'
+        if self.ssdtype != 'GB':
+            if self.ssdtype == 'MB':
+                self.memSSD = float(self.memSSD/1024)
+            if self.ssdtype == 'TB':
+                self.memSSD = float(self.memSSD*1024)
+            self.ssdtype = 'GB'
+        if self.bandwidthtype != 'GB':
+            if self.bandwidthtype == 'MB':
+                self.bandwidth = float(self.bandwidth/1024)
+            if self.bandwidthtype == 'TB':
+                self.bandwidth = float(self.bandwidth*1024)
+            self.bandwidthtype = 'GB'
 
 
     def toSQL(self):
@@ -36,8 +70,8 @@ class Computer:
         print ("Price mo = ", self.priceMo)
         print ("CPUS = ", self.cpus)
         print ("RAM = ", self.memRam)
-        print ("RAM = ", self.ramtype)
+        print ("RAM TYPE= ", self.ramtype)
         print ("SSD = ", self.memSSD)
-        print ("SSD = ", self.ssdtype)
+        print ("SSD TYPE = ", self.ssdtype)
         print ("Transfer = ", self.bandwidth)
-        print ("Transfer = ", self.bandwidthtype)
+        print ("Transfer TYPE = ", self.bandwidthtype)
