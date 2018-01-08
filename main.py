@@ -27,6 +27,7 @@ class Main(cmd.Cmd):
 
     def do_download(self, line):
         run.extractData()
+        print("Data downloaded, to see type: show")
 
     def do_dumptxt(self, line):
         sqlitedatabase.dumptxt()

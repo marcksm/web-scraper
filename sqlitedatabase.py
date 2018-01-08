@@ -9,6 +9,9 @@ def makeConnection():
     global cursor
     cursor = conn.cursor()
     print("Connected to sqlite db")
+    print("database:\t computers.db")
+    if (isTable()):
+        print ("current table:\t computers")
 
 def closeConnection():
     """ Ends sqlite connection  """
