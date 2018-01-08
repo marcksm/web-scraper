@@ -15,6 +15,7 @@ def makeRequests():
     r2 = requests.get('https://www.vultr.com/pricing/')
     r3 = requests.get('https://www.packet.net/bare-metal/')
     service = [r1, r2, r3]
+    
 def name_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
