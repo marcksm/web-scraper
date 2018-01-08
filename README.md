@@ -11,6 +11,7 @@ It mainly based on python and sqlite3 using some python libs like Xpath, panda r
 * Git
 * python3
 * pip
+* sqlite3
 
 ## Installing locally
 
@@ -23,4 +24,13 @@ cd web-scraper
 Install pip for python3
 ```
 sudo apt-get install python3-pip
+```
+Install pandas for python3:
+```
+sudo apt-get install python3-pandas
+```
+
+Install sqlite3:
+```
+sudo apt-get install sqlite3
 ```
