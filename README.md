@@ -34,3 +34,23 @@ Install sqlite3:
 ```
 sudo apt-get install sqlite3
 ```
+## Running localy
+
+ To see available commands of script, inside web-crawler folder, run:
+ ```
+  python3 main.py help
+ ```
+ 
+ To download data and store in a sqlite file (computers.db):
+ ```
+ python3 main.py download
+ ```
+ To see data stored:
+ ```
+ python3 main.py show
+ ```
+ To delete stored data:
+ ```
+ python3 main.py delete
+ ```
+ 
