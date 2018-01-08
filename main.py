@@ -66,6 +66,8 @@ if __name__ == '__main__':
         Main().cmdloop()
     elif (str(sys.argv[1]) == 'download'):
          Main().do_download('arg')
+    elif (str(sys.argv[1]) == 'help'):
+         Main().do_h('arg')
     elif (str(sys.argv[1]) == 'delete'):
          Main().do_delete('arg')
     elif (str(sys.argv[1]) == 'show'):
