@@ -1,5 +1,5 @@
 # Web-Crawler
-This is a Web Crawler for my application at Digesto folowing their critiria.
+This is a Web Crawler for my application at Digesto following their criteria.
 
 It mainly based on python and sqlite3 using some python libs like Xpath, panda requests.
 
