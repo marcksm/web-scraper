@@ -53,4 +53,9 @@ sudo apt-get install sqlite3
  ```
  python3 main.py delete
  ```
+ Check the command line input mode for additional commands:
+ ```
+ python3 main.py cli
+ ```
+ 
  
