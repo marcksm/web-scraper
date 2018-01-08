@@ -10,12 +10,11 @@ global stack
 stack = []
 
 def makeRequests():
-    global r1, r2, r3, r4
+    global service, r1, r2, r3
     r1 = requests.get('https://www.digitalocean.com/pricing/')
     r2 = requests.get('https://www.vultr.com/pricing/')
     r3 = requests.get('https://www.packet.net/bare-metal/')
-    r4 = requests.get('https://www.vultr.com/pricing/dedicatedcloud/')
-
+    service = [r1, r2, r3]
 def name_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -29,66 +28,25 @@ def buildTrees():
     locations = [location1, location2, location3]
     return locations
 
-def extractR1(comp_tree):
-    tree=comp_tree
-    print ("------------------------------------------------------------------------------------------------------------------------")
-    stack.clear()
-    explore(tree, 'RAM')
-    build(stack)
-    print (stack)
-    stack.clear()
-    print ("------------------------------------------------------------------------------------------------------------------------")
-    name = 'PC_' + name_generator()
-    price_mo = comp_tree.xpath('div/div/div/span[@class="PriceBlock-num"]')[0].text_content()
-    price_hr = comp_tree.xpath('div/div/div[@class="u-flex u-flexCenter PriceBlock--secondary"]')[0].text_content()
-    mem_ram = comp_tree.xpath('div/ul/li/span')[0].text_content()
-    cpus = comp_tree.xpath('div/ul/li')[1].text_content()
-    mem_ssd = comp_tree.xpath('div/ul/li')[2].text_content()
-    bandwidth = comp_tree.xpath('div/ul/li')[3].text_content()
-    computer = Computer(r1.url, name, price_hr, price_mo, cpus, mem_ram, mem_ssd, bandwidth)
+def buildComputer(div_itens, service):
+    div = (' '.join(div_itens)).replace('\n', ' ').replace('\r', '')
+    price_mo = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[m][o][n]*", div).group()
+    price_hr = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[h][r|o][u]*", div).group()
+    mem_ram = re.search("[0-9]+\.*[0-9]*[\s]*[M|G|T][B][\s]*[a-zA-Z0-9- ]*[\s]*[M|R][e|A][m|M]", div).group()
+    cpu = re.search("[0-9]+[\s]*[a-zA-Z]*[\s]*[v|C]*[C|o][P|r][Ue][s]*", div).group()
+    mem_ssd = re.search("[0-9]+\.*[0-9]*[\s]*[\.*[0-9]*]*[G|T|M][B][\s*][[a-zA-Z ]*[\s]*]*[S][S][D]", div).group()
+    bandwidth = re.search("[0-9]+\.*[0-9]*[\s]*[\.*[0-9]*]*[G|T|M][B][\s*][B|T][a|r][n|a][d|n][w|s][i|f][d|e][t|r][h]*", div)
+    name = re.search("[u][r][\s]*[A-Z][a-zA-Z0-9]*[\s]*[a-zA-Z0-9 /]*", div)
+    hdd = re.search("[0-9]+\.*[0-9]*[\s]*[\.*[0-9]*]*[G|T|M][B][\s*][[a-zA-Z ]*[\s]*]*[H][D][D]", div)
+    name = (name.group() if name else 'PC_' + name_generator())
+    bandwidth = (bandwidth.group() if bandwidth else "0GB")
+    computer = Computer (service, name, price_hr, price_mo, cpu, mem_ram, mem_ssd, bandwidth)
+    computer.sethdd(hdd.group()) if hdd else 0
     return computer
 
-def extractR2(comp_tree):
-    tree=comp_tree
-    stack.clear()
-    print ("------------------------------------------------------------------------------------------------------------------------")
-    explore(tree, 'RAM')
-    build(stack)
-    print ("------------------------------------------------------------------------------------------------------------------------")
-    name = 'PC_' + name_generator()
-    print (stack)
-    stack.clear()
-    price_mo = comp_tree.xpath('a/div/span[@class="package-price"]/@data-monthly')[0]
-    price_hr = comp_tree.xpath('a/div/span[@class="package-price"]/@data-hourly')[0]
-    cpus = comp_tree.xpath('a/div[@class="package-body"]/ul/li')[0].text_content()
-    mem_ram = comp_tree.xpath('a/div[@class="package-body"]/ul/li')[1].text_content()
-    bandwidth = comp_tree.xpath('a/div[@class="package-body"]/ul/li')[2].text_content()
-    mem_ssd = comp_tree.xpath('a/div/h3')[0].text_content()
-    computer = Computer(r2.url, name, price_hr, price_mo, cpus, mem_ram, mem_ssd, bandwidth)
-    return computer
-
-def build(div_itens):
-    for i in range(0, len(div_itens)):
-        div_itens[i] = div_itens[i].replace('\n', ' ').replace('\r', '')
-    div = ' '.join(div_itens)
-    price_mo = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[m][o][n]*", div)
-    price_hr = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[h][r|o][u]*", div)
-    mem_ram = re.search("[0-9]+[\s]*[M|G|T][B][\s]*[a-zA-Z0-9- ]*[\s]*[M|R][e|A][m|M]", div)
-    cpu = re.search("[0-9]+[\s]*[a-zA-Z]*[\s]*[v|C]*[C|o][P|r][Ue][s]*", div)
-    if (price_mo):
-        print (price_mo.group())
-    if (price_hr):
-        print (price_hr.group())
-    if (mem_ram):
-        print (mem_ram.group())
-    if (cpu):
-        print (cpu.group())
-    print (div)
-
-
-def explore(root, data):
+def exploreDiv(root):
     for i in range (0, len(root)):
-        explore(root[i], data)
+        exploreDiv(root[i])
     if root.xpath('@data-hourly'):
         stack.append(root.xpath('@data-hourly')[0] + '/hr')
         stack.append(root.xpath('@data-monthly')[0] + '/mo')
@@ -96,48 +54,6 @@ def explore(root, data):
         div_data = root.text_content()
         div_data = re.sub('\s+',' ',div_data)
         stack.append(div_data.strip())
-
-def extractR3(comp_tree):
-    price_mo = comp_tree.xpath('div[@class="head"]/p[@class="price_rate price_monthly"]/span[@class="h6 fc-bold"]')[0].text_content()
-    tree=comp_tree
-    stack.clear()
-    print ("------------------------------------------------------------------------------------------------------------------------")
-    explore(tree, 'RAM')
-    build(stack)
-    print (stack)
-    stack.clear()
-    print ("------------------------------------------------------------------------------------------------------------------------")
-
-    # for i in range (0, len (tree)):
-    #     x=tree[i]
-    #     for k in range (0, len (x)):
-    #         g=x[k]
-    #         for j in range (0, len (g)):
-    #             print(g[j].text_content())
-    #
-
-    price_hr = comp_tree.xpath('div[@class="head"]/p')[0].text_content()
-    name = comp_tree.xpath('div[@class="head"]/p[@class="label"]')[0].text_content()
-    cpus = comp_tree.xpath('div[@class="body flex"]/span/p/b')[0].text_content()
-    body = comp_tree.xpath('div[@class="body flex"]/span/p/b')
-    hdd = None
-    for i in range (0, len(body)):
-        if re.search('RAM',body[i].text_content()):
-            mem_ram = comp_tree.xpath('div[@class="body flex"]/span/p/b')[i].text_content()
-        if re.search('SSD', body[i].text_content()):
-            mem_ssd = comp_tree.xpath('div[@class="body flex"]/span/p/b')[i].text_content()
-        if re.search('HDD', body[i].text_content()):
-            hdd = comp_tree.xpath('div[@class="body flex"]/span/p/b')[i].text_content()
-            hdd_size = float(re.findall("[0-9]+\.*[0-9]*", hdd)[0])
-            hdd_type = re.findall("[a-zA-Z]+", hdd)[0]
-        if re.search('Network', body[i].text_content()):
-            bandwidth = comp_tree.xpath('div[@class="body flex"]/span/p')[i].text_content()
-    computer = Computer (r3.url, name, price_hr, price_mo, cpus, mem_ram, mem_ssd, bandwidth)
-    if (hdd):
-        computer.sethdd(hdd_size, hdd_type)
-    computer.bandwidth = '(custom)'
-    computer.bandwidthtype = 'GB'
-    return computer
 
 def extractData():
     if (sqlitedatabase.isTable() == False):
@@ -147,16 +63,12 @@ def extractData():
     makeRequests()
     locations = buildTrees()
     for k in range (0, len(locations)):
-        comp = locations[k]
-        for i in range (0, len(comp)):
-            if k == 0:
-                computer = extractR1(comp[i])
-            elif k == 1:
-                computer = extractR2(comp[i])
-            else:
-                computer = extractR3(comp[i])
+        div_comp = locations[k]
+        for i in range (0, len(div_comp)):
+            stack.clear()
+            exploreDiv(div_comp[i])
+            computer = buildComputer(stack, service[k].url)
             computer.convertToGB()
             sqlitedatabase.tableInsert(computer.toSQL())
-
     sqlitedatabase.tableSave()
     print("Data extracted!")

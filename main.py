@@ -9,6 +9,12 @@ class Main(cmd.Cmd):
     def do_showdata(self, line):
         sqlitedatabase.showTable()
 
+    def do_deletedata(self, line):
+        sqlitedatabase.dropTable()
+
+    def do_downloaddata(self, line):
+        run.extractData()
+
     def do_EOF(self, line):
         return True
 

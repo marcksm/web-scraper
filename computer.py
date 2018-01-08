@@ -7,7 +7,7 @@ class Computer:
     hdd_type = None
 
     def __init__(self, service, name, priceHr, priceMo, cpus, memRam, memSSD, bandwidth):
-        self.name = name
+        self.name = re.findall("[A-Z][a-zA-Z0-9_]*[\s]*[a-zA-Z0-9 /]*", name)[0]
         self.service = service
         self.priceHr = re.findall("\d+\.\d+", priceHr)[0]
         self.priceMo = float(re.findall("[0-9]+\.*[0-9]*", priceMo)[0])
@@ -18,6 +18,8 @@ class Computer:
         self.ssdtype = re.findall("[a-zA-Z]+", memSSD)[0]
         self.bandwidth = float(re.findall("[0-9]+\.*[0-9]*", bandwidth)[0])
         self.bandwidthtype = re.findall("[a-zA-Z]+", bandwidth)[0]
+        if (self.bandwidth == 0):
+            self.bandwidth = "(custom)"
 
     def ishdd(self):
         if hdd != None:
@@ -25,10 +27,10 @@ class Computer:
         else:
             return False
 
-    def sethdd(self, hdd_size, hdd_type):
+    def sethdd(self, string):
         self.hdd = True
-        self.hdd_size = hdd_size
-        self.hdd_type = hdd_type
+        self.hdd_size = float(re.findall("[0-9]+\.*[0-9]*", string)[0])
+        self.hdd_type = re.findall("[a-zA-Z]+", string)[0]
         if (self.ssdtype == 'GB'):
             if (self.hdd_type == 'TB'):
                 self.hdd_size = float(self.hdd_size * 1024)
