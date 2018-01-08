@@ -7,29 +7,52 @@ import string
 import random
 
 global stack
+""" stack is responsable to store all information in order from the selected computer html DIV """
 stack = []
 
 def makeRequests():
-    global service, r1, r2, r3
+    """ This function make request to the selected websites and return a list with them """
     r1 = requests.get('https://www.digitalocean.com/pricing/')
     r2 = requests.get('https://www.vultr.com/pricing/')
     r3 = requests.get('https://www.packet.net/bare-metal/')
     service = [r1, r2, r3]
-    
+    return service
+
 def name_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    """ This function generates a random name using 6 charactes, this is used for sites that
+        do not give a name to a computer
+     """
     return ''.join(random.choice(chars) for _ in range(size))
 
-def buildTrees():
-    tree1 = html.fromstring(r1.text)
-    tree2 = html.fromstring(r2.text)
-    tree3 = html.fromstring(r3.text)
+def buildTrees(websites):
+    """ This function receives a list of websites and build a tree using xpath and returns it """
+    tree1 = html.fromstring(websites[0].text)
+    tree2 = html.fromstring(websites[1].text)
+    tree3 = html.fromstring(websites[2].text)
     location1 = tree1.xpath('//div[@class="PriceBlock-container"]')
     location2 = tree2.xpath('//div[@class="packages-row row"]/div[@class="col-sm-3 col-xs-6"]')
     location3 = tree3.xpath('//article[@class="pricing-item col-3"]')
     locations = [location1, location2, location3]
     return locations
 
+def exploreDiv(root):
+    """ This function receives a xpath node and explores in order left to right (first to last) until
+        find the deepest node with data, then store the data in the global stack
+     """
+    for i in range (0, len(root)):
+        exploreDiv(root[i])
+    if root.xpath('@data-hourly'):
+        stack.append(root.xpath('@data-hourly')[0] + '/hr')
+        stack.append(root.xpath('@data-monthly')[0] + '/mo')
+    if (len(root) <= 1 and str(root) != "<!-- /.package -->"):
+        div_data = root.text_content()
+        div_data = re.sub('\s+',' ',div_data)
+        stack.append(div_data.strip())
+
 def buildComputer(div_itens, service):
+    """ This function receives a html DIV from the global stack and a website, and extract the
+        computer data using regex and return a Computer class with that data
+     """
     div = (' '.join(div_itens)).replace('\n', ' ').replace('\r', '')
     price_mo = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[m][o][n]*", div).group()
     price_hr = re.search("[\$][\s]*[0-9]+[\.*[0-9]*]*[\s]*[/][\s]*[h][r|o][u]*", div).group()
@@ -45,30 +68,23 @@ def buildComputer(div_itens, service):
     computer.sethdd(hdd.group()) if hdd else 0
     return computer
 
-def exploreDiv(root):
-    for i in range (0, len(root)):
-        exploreDiv(root[i])
-    if root.xpath('@data-hourly'):
-        stack.append(root.xpath('@data-hourly')[0] + '/hr')
-        stack.append(root.xpath('@data-monthly')[0] + '/mo')
-    if (len(root) <= 1 and str(root) != "<!-- /.package -->"):
-        div_data = root.text_content()
-        div_data = re.sub('\s+',' ',div_data)
-        stack.append(div_data.strip())
 
 def extractData():
+    """ This is a main function that download and extract data from the requested websites
+        and stores it into SQlite database
+     """
     if (sqlitedatabase.isTable() == False):
         print("Table not found, creating table...")
         sqlitedatabase.createTable()
     print("Extracting data...")
-    makeRequests()
-    locations = buildTrees()
+    websites = makeRequests()
+    locations = buildTrees(websites)
     for k in range (0, len(locations)):
         div_comp = locations[k]
         for i in range (0, len(div_comp)):
             stack.clear()
             exploreDiv(div_comp[i])
-            computer = buildComputer(stack, service[k].url)
+            computer = buildComputer(stack, websites[k].url)
             computer.convertToGB()
             sqlitedatabase.tableInsert(computer.toSQL())
     sqlitedatabase.tableSave()

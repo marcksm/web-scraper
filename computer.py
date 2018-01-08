@@ -1,7 +1,7 @@
 import re
 
 class Computer:
-
+    """ This class is responsable to store a computer data givem parametes """
     hdd = None
     hdd_size = None
     hdd_type = None
@@ -22,12 +22,14 @@ class Computer:
             self.bandwidth = "(custom)"
 
     def ishdd(self):
+        """ Returns true if this computer has HDD """
         if hdd != None:
             return True
         else:
             return False
 
     def sethdd(self, string):
+        """ Set a HDD to this computer """
         self.hdd = True
         self.hdd_size = float(re.findall("[0-9]+\.*[0-9]*", string)[0])
         self.hdd_type = re.findall("[a-zA-Z]+", string)[0]
@@ -42,6 +44,7 @@ class Computer:
         self.memSSD = self.memSSD + self.hdd_size
 
     def convertToGB(self):
+        """ Convert RAM, SSD, HDD, bandwidth formats to GB """
         if self.ramtype != 'GB':
             if self.ramtype == 'MB':
                 self.memRam = float(self.memRam/1024)
@@ -63,10 +66,12 @@ class Computer:
 
 
     def toSQL(self):
+        """ Prepare and return a list to be used in SQlite script to insert in db """
         data = [self.name, self.service, self.priceHr, self.priceMo, self.cpus, self.memRam, self.memSSD, self.bandwidth]
         return data
 
     def showData(self):
+        """ Debug function """
         print ("Name = ", self.name)
         print ("Price hr = ", self.priceHr)
         print ("Price mo = ", self.priceMo)

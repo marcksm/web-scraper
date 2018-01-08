@@ -6,7 +6,9 @@ import sys
 
 
 class Main(cmd.Cmd):
+    """ Main class  with cli commands below """
     prompt = 'marcos@digesto> '
+
     def do_greet(self, line):
         print ("hello")
 
@@ -55,11 +57,11 @@ if __name__ == '__main__':
         Main().do_help('arg')
         Main().cmdloop()
     elif (str(sys.argv[1]) == 'download'):
-         Main().do_downloaddata('arg')
+         Main().do_download('arg')
     elif (str(sys.argv[1]) == 'delete'):
-         Main().do_deletedata('arg')
+         Main().do_delete('arg')
     elif (str(sys.argv[1]) == 'show'):
-         Main().do_showdata('arg')
+         Main().do_show('arg')
     else:
         print ("=>Invalid arguments")
         Main().do_h('arg')

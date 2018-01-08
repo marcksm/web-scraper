@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 
 def makeConnection():
+    """ Connects to local sqlite3 database computers """
     global conn
     conn = sqlite3.connect('computers.db')
     global cursor
@@ -9,11 +10,13 @@ def makeConnection():
     print("Connected to sqlite db")
 
 def closeConnection():
+    """ Ends sqlite connection  """
     conn.commit()
     conn.close()
     print("Connection closed")
 
 def dropTable():
+    """ Drop table from the database """
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
@@ -23,6 +26,7 @@ def dropTable():
         print('Table was successfully dropped.')
 
 def isTable():
+    """ Verify if there is a table used in this script, if there is returns True else False """
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
@@ -35,6 +39,7 @@ def isTable():
             return False
 
 def createTable():
+    """ Creates a table in the database """
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
@@ -57,6 +62,7 @@ def createTable():
         print('Table was successfully created.')
 
 def tableInsert(data):
+    """ Receives data, and insert it into the database """
     if cursor == None:
         print("Connection failure, make sure you are connected to db")
     else:
@@ -66,14 +72,18 @@ def tableInsert(data):
         """,(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]))
 
 def tableSave():
+    """ Save all the modifications to database """
     if conn == None:
         print ("Error, sqlite is not connected")
     else:
         conn.commit()
 
 def showTable():
+    """ Prints a formated output of the table """
     if conn == None or cursor == None:
         print ("Error, sqlite is not connected")
+    elif not isTable():
+        print ("Error, table not found")
     else:
         cursor.execute("SELECT name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
         pd.set_option('display.max_columns', 1000)
