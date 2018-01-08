@@ -1,5 +1,6 @@
 import sqlite3
 import pandas as pd
+import json
 
 def makeConnection():
     """ Connects to local sqlite3 database computers """
@@ -85,9 +86,49 @@ def showTable():
     elif not isTable():
         print ("Error, table not found")
     else:
-        cursor.execute("SELECT name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
+        cursor.execute("SELECT id, name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
         pd.set_option('display.max_columns', 1000)
         pd.set_option('display.width', 1000)
         data = pd.DataFrame(cursor.fetchall())
-        data.columns = ['Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+        l = []
+        for i in range (0 , len(data.index)):
+            l.append('')
+        data.index = l
+        data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
         print(data)
+
+def dumptxt():
+    if conn == None or cursor == None:
+        print ("Error, sqlite is not connected")
+    elif not isTable():
+        print ("Error, table not found")
+    else:
+        cursor.execute("SELECT id, name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
+        pd.set_option('display.max_columns', 1000)
+        pd.set_option('display.width', 1000)
+        data = pd.DataFrame(cursor.fetchall())
+        l = []
+        for i in range (0 , len(data.index)):
+            l.append('')
+        data.index = l
+        data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+        data.to_csv('output.txt', sep='\t', encoding='utf-8')
+        print("Data was successfully dumped into output.txt")
+
+def dumpcsv():
+    if conn == None or cursor == None:
+        print ("Error, sqlite is not connected")
+    elif not isTable():
+        print ("Error, table not found")
+    else:
+        cursor.execute("SELECT id, name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
+        pd.set_option('display.max_columns', 1000)
+        pd.set_option('display.width', 1000)
+        data = pd.DataFrame(cursor.fetchall())
+        l = []
+        for i in range (0 , len(data.index)):
+            l.append('')
+        data.index = l
+        data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+        data.to_csv('output.csv', sep='\t', encoding='utf-8')
+        print("Data was successfully dumped into output.csv")

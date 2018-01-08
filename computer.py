@@ -14,10 +14,16 @@ class Computer:
         self.cpus = int(re.findall("\d+", cpus)[0])
         self.memRam = float(re.findall("[0-9]+\.*[0-9]*", memRam)[0])
         self.ramtype = re.findall("[a-zA-Z]+", memRam)[0]
-        self.memSSD = float(re.findall("[0-9]+\.*[0-9]*", memSSD)[0])
-        self.ssdtype = re.findall("[a-zA-Z]+", memSSD)[0]
         self.bandwidth = float(re.findall("[0-9]+\.*[0-9]*", bandwidth)[0])
         self.bandwidthtype = re.findall("[a-zA-Z]+", bandwidth)[0]
+        if ("X" in memSSD):
+            mult = memSSD.split(" ")[0]
+            value = memSSD.split(" ")[2]
+            self.ssdtype = memSSD.split(" ")[3]
+            self.memSSD = float (float(mult) * float(value))
+        else:
+            self.memSSD = float(re.findall("[0-9]+\.*[0-9]*", memSSD)[0])
+            self.ssdtype = re.findall("[a-zA-Z]+", memSSD)[0]
         if (self.bandwidth == 0):
             self.bandwidth = "(custom)"
 

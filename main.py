@@ -26,6 +26,12 @@ class Main(cmd.Cmd):
     def do_download(self, line):
         run.extractData()
 
+    def do_dumptxt(self, line):
+        sqlitedatabase.dumptxt()
+
+    def do_dumpcsv(self, line):
+        sqlitedatabase.dumpcsv()
+
     def do_h (self, line):
         print ("@Avaliable arguments:")
         print ("\t$python3 main.py download \t-> Extract and Download data from websites requested")
@@ -39,6 +45,8 @@ class Main(cmd.Cmd):
         print ("\tdownload \t-> Extract and Download data from websites requested")
         print ("\tshow \t\t-> Show table of data downloaded if avaliable")
         print ("\tdelete \t\t-> Delete data and drop table from local SQlite3")
+        print ("\tdumpcsv \t-> output.csv in local diretory the CSV format from data")
+        print ("\tdumptxt \t-> output.txt in local diretory the txt format from data")
         print ("\texit \t\t-> Exit command line input mode")
 
     def do_EOF(self, line):
@@ -47,13 +55,13 @@ class Main(cmd.Cmd):
     def do_exit(self, line):
         return True
 
-
 if __name__ == '__main__':
     sqlitedatabase.makeConnection()
     if (len(sys.argv) <= 1 or len(sys.argv) >= 3):
         print ("=>Invalid arguments")
         Main().do_h('arg')
     elif (str(sys.argv[1]) == 'cli'):
+        print("Welcome to my application at Digesto, this script provides a web crawler.")
         Main().do_help('arg')
         Main().cmdloop()
     elif (str(sys.argv[1]) == 'download'):
