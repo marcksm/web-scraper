@@ -7,7 +7,10 @@ class Main(cmd.Cmd):
         print ("hello")
 
     def do_showdata(self, line):
-        sqlitedatabase.showTable()
+        if (sqlitedatabase.isTable()):
+            sqlitedatabase.showTable()
+        else:
+            print ("Table/Data not found, please run: downloaddata")
 
     def do_deletedata(self, line):
         sqlitedatabase.dropTable()
