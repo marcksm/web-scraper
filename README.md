@@ -1,2 +1,26 @@
-# web-scraper
-A web scraper for my application at Digesto
+# Web-Crawler
+This is a Web Crawler for my application at Digesto folowing their critiria.
+
+It mainly based on python and sqlite3 using some python libs like Xpath, panda requests.
+
+#### Disclaimer: The websites used in this application is totally for educational purpose.
+
+## Dependencies
+
+* Unix/Linux machine
+* Git
+* python3
+* pip
+
+## Installing locally
+
+Clone this repository
+
+```
+git clone https://github.com/marcksm/web-scraper.git
+cd web-scraper
+```
+Install pip for python3
+```
+sudo apt-get install python3-pip
+```
