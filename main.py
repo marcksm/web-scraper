@@ -15,6 +15,8 @@ class Main(cmd.Cmd):
     def do_show(self, line):
         if (sqlitedatabase.isTable()):
             sqlitedatabase.showTable()
+            print ("\n*Some computers do not have name in website, so it was randomly generated")
+            print ("*Some computers do not have a bandwidth service included, sold separately by $0.05/GB ")
         elif (line == 'arg'):
             print ("Table/Data not found, please run: python3 main.py download")
         else:
