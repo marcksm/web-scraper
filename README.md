@@ -10,7 +10,6 @@ It mainly based on python and sqlite3 using some python libs like Xpath, panda r
 * Unix/Linux machine
 * Git
 * python3
-* pip
 * sqlite3
 
 ## Installing locally
@@ -20,10 +19,6 @@ Clone this repository
 ```
 git clone https://github.com/marcksm/web-scraper.git
 cd web-scraper
-```
-Install pip for python3
-```
-sudo apt-get install python3-pip
 ```
 Install pandas for python3:
 ```
