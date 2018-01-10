@@ -82,7 +82,7 @@ def tableSave():
     else:
         conn.commit()
 
-def showTable():
+def queryData():
     """ Prints a formated output of the table """
     if conn == None or cursor == None:
         print ("Error, sqlite is not connected")
@@ -98,40 +98,22 @@ def showTable():
             l.append('')
         data.index = l
         data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+        return data
+    return None
+
+def showTable():
+    data = queryData()
+    if (data is not None):
         print(data)
 
 def dumptxt():
-    if conn == None or cursor == None:
-        print ("Error, sqlite is not connected")
-    elif not isTable():
-        print ("Error, table not found")
-    else:
-        cursor.execute("SELECT id, name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
-        pd.set_option('display.max_columns', 1000)
-        pd.set_option('display.width', 1000)
-        data = pd.DataFrame(cursor.fetchall())
-        l = []
-        for i in range (0 , len(data.index)):
-            l.append('')
-        data.index = l
-        data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+    data = queryData()
+    if (data is not None):
         data.to_csv('output.txt', sep='\t', encoding='utf-8')
         print("Data was successfully dumped into output.txt")
 
 def dumpcsv():
-    if conn == None or cursor == None:
-        print ("Error, sqlite is not connected")
-    elif not isTable():
-        print ("Error, table not found")
-    else:
-        cursor.execute("SELECT id, name, service, pricehr, pricemo, cpus, memram, memssd, bandwidth FROM computers;")
-        pd.set_option('display.max_columns', 1000)
-        pd.set_option('display.width', 1000)
-        data = pd.DataFrame(cursor.fetchall())
-        l = []
-        for i in range (0 , len(data.index)):
-            l.append('')
-        data.index = l
-        data.columns = ['ID', 'Name', 'Site', '$ / hour', '$ / month', 'CPUs', 'RAM (GB)', 'Storage (GB)', 'Bandwidth (GB)']
+    data = queryData()
+    if (data is not None):
         data.to_csv('output.csv', sep='\t', encoding='utf-8')
         print("Data was successfully dumped into output.csv")
